@@ -1,0 +1,653 @@
+{
+  "info": {
+    "_postman_id": "a94e5b2f-6e31-4c4e-8a17-56f0de9c5c8a",
+    "name": "ZATCA Phase 2 API Testing",
+    "description": "Collection for testing the ZATCA Phase 2 compliant API implementation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://localhost:5001",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Authenticate and get a JWT token"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);",
+                  "pm.collectionVariables.set(\"token\", jsonData.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"password123\",\n    \"email\": \"test@example.com\",\n    \"companyName\": \"Test Company\",\n    \"vatRegistrationNumber\": \"123456789012345\",\n    \"role\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new user (requires admin privileges)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Device Management",
+      "item": [
+        {
+          "name": "Register Device",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"deviceName\": \"Test POS\",\n    \"model\": \"Model X1\",\n    \"hardwareVersion\": \"1.0\",\n    \"softwareVersion\": \"1.0\",\n    \"vatRegistrationNumber\": \"123456789012345\",\n    \"companyName\": \"Test Company LLC\",\n    \"commercialRegistrationNumber\": \"1234567890\",\n    \"streetName\": \"King Fahd Road\",\n    \"buildingNumber\": \"1234\",\n    \"cityName\": \"Riyadh\",\n    \"districtName\": \"Al Olaya\",\n    \"postalCode\": \"12345\",\n    \"countryCode\": \"SA\",\n    \"certificateType\": \"Compliance\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/devices/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "register"
+              ]
+            },
+            "description": "Register a new device with ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Device",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456"
+              ]
+            },
+            "description": "Get device details by serial number"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Devices",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices"
+              ]
+            },
+            "description": "Get all registered devices"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Device Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "1"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "status"
+              ]
+            },
+            "description": "Update device status (0=Pending, 1=Registered, 2=Active, 3=Suspended, 4=Deactivated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate CSR",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/generatecsr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "generatecsr"
+              ]
+            },
+            "description": "Generate a Certificate Signing Request (CSR) for the device"
+          },
+          "response": []
+        },
+        {
+          "name": "Request Compliance Certificate",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/compliancecertificate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "compliancecertificate"
+              ]
+            },
+            "description": "Request a compliance certificate from ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Request Production Certificate",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\"123456\""
+            },
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/productioncertificate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "productioncertificate"
+              ]
+            },
+            "description": "Request a production certificate using an OTP from ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Renew Certificate",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/renewcertificate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "renewcertificate"
+              ]
+            },
+            "description": "Renew the device's certificate"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Certificate Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/POS123456/certificate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "devices",
+                "POS123456",
+                "certificate"
+              ]
+            },
+            "description": "Get certificate details for the device"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Invoice Management",
+      "item": [
+        {
+          "name": "Report Invoice",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"documentNumber\": \"INV-001\",\n    \"documentDate\": \"2023-01-01T12:00:00\",\n    \"documentIssueTime\": \"2023-01-01T12:00:00\",\n    \"sellerName\": \"Test Company LLC\",\n    \"sellerVatNumber\": \"123456789012345\",\n    \"sellerStreetName\": \"King Fahd Road\",\n    \"sellerBuildingNumber\": \"1234\",\n    \"sellerCityName\": \"Riyadh\",\n    \"sellerPostalCode\": \"12345\",\n    \"sellerDistrictName\": \"Al Olaya\",\n    \"sellerCountryCode\": \"SA\",\n    \"buyerName\": \"Buyer Company LLC\",\n    \"buyerVatNumber\": \"311111111111113\",\n    \"buyerStreetName\": \"King Abdullah Road\",\n    \"buyerBuildingNumber\": \"5678\",\n    \"buyerCityName\": \"Riyadh\",\n    \"buyerPostalCode\": \"54321\",\n    \"buyerDistrictName\": \"Al Malaz\",\n    \"buyerCountryCode\": \"SA\",\n    \"totalAmount\": 1000,\n    \"totalWithoutVat\": 1000,\n    \"vatAmount\": 150,\n    \"discount\": 0,\n    \"invoiceType\": 0,\n    \"transactionType\": 0,\n    \"invoiceCurrency\": \"SAR\",\n    \"paymentMethod\": \"CASH\",\n    \"lineItems\": [\n        {\n            \"lineNumber\": 1,\n            \"itemName\": \"Product A\",\n            \"itemDescription\": \"High quality product\",\n            \"quantity\": 2,\n            \"unitOfMeasure\": \"EA\",\n            \"unitPrice\": 500,\n            \"netAmount\": 1000,\n            \"vatRate\": 15,\n            \"vatAmount\": 150,\n            \"totalAmount\": 1150,\n            \"discountAmount\": 0,\n            \"discountPercentage\": 0\n        }\n    ],\n    \"generateXml\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "report"
+              ]
+            },
+            "description": "Report a standard B2B invoice to ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Report Credit Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"documentNumber\": \"CN-001\",\n    \"documentDate\": \"2023-01-02T12:00:00\",\n    \"documentIssueTime\": \"2023-01-02T12:00:00\",\n    \"sellerName\": \"Test Company LLC\",\n    \"sellerVatNumber\": \"123456789012345\",\n    \"sellerStreetName\": \"King Fahd Road\",\n    \"sellerBuildingNumber\": \"1234\",\n    \"sellerCityName\": \"Riyadh\",\n    \"sellerPostalCode\": \"12345\",\n    \"sellerDistrictName\": \"Al Olaya\",\n    \"sellerCountryCode\": \"SA\",\n    \"buyerName\": \"Buyer Company LLC\",\n    \"buyerVatNumber\": \"311111111111113\",\n    \"buyerStreetName\": \"King Abdullah Road\",\n    \"buyerBuildingNumber\": \"5678\",\n    \"buyerCityName\": \"Riyadh\",\n    \"buyerPostalCode\": \"54321\",\n    \"buyerDistrictName\": \"Al Malaz\",\n    \"buyerCountryCode\": \"SA\",\n    \"totalAmount\": 200,\n    \"totalWithoutVat\": 200,\n    \"vatAmount\": 30,\n    \"discount\": 0,\n    \"invoiceType\": 0,\n    \"transactionType\": 2,\n    \"invoiceCurrency\": \"SAR\",\n    \"paymentMethod\": \"CASH\",\n    \"relatedInvoiceNumber\": \"INV-001\",\n    \"lineItems\": [\n        {\n            \"lineNumber\": 1,\n            \"itemName\": \"Product A Return\",\n            \"itemDescription\": \"Return of defective product\",\n            \"quantity\": 1,\n            \"unitOfMeasure\": \"EA\",\n            \"unitPrice\": 200,\n            \"netAmount\": 200,\n            \"vatRate\": 15,\n            \"vatAmount\": 30,\n            \"totalAmount\": 230,\n            \"discountAmount\": 0,\n            \"discountPercentage\": 0\n        }\n    ],\n    \"generateXml\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/creditnote",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "creditnote"
+              ]
+            },
+            "description": "Report a credit note to ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Report Debit Note",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"documentNumber\": \"DN-001\",\n    \"documentDate\": \"2023-01-03T12:00:00\",\n    \"documentIssueTime\": \"2023-01-03T12:00:00\",\n    \"sellerName\": \"Test Company LLC\",\n    \"sellerVatNumber\": \"123456789012345\",\n    \"sellerStreetName\": \"King Fahd Road\",\n    \"sellerBuildingNumber\": \"1234\",\n    \"sellerCityName\": \"Riyadh\",\n    \"sellerPostalCode\": \"12345\",\n    \"sellerDistrictName\": \"Al Olaya\",\n    \"sellerCountryCode\": \"SA\",\n    \"buyerName\": \"Buyer Company LLC\",\n    \"buyerVatNumber\": \"311111111111113\",\n    \"buyerStreetName\": \"King Abdullah Road\",\n    \"buyerBuildingNumber\": \"5678\",\n    \"buyerCityName\": \"Riyadh\",\n    \"buyerPostalCode\": \"54321\",\n    \"buyerDistrictName\": \"Al Malaz\",\n    \"buyerCountryCode\": \"SA\",\n    \"totalAmount\": 150,\n    \"totalWithoutVat\": 150,\n    \"vatAmount\": 22.5,\n    \"discount\": 0,\n    \"invoiceType\": 0,\n    \"transactionType\": 3,\n    \"invoiceCurrency\": \"SAR\",\n    \"paymentMethod\": \"CASH\",\n    \"relatedInvoiceNumber\": \"INV-001\",\n    \"lineItems\": [\n        {\n            \"lineNumber\": 1,\n            \"itemName\": \"Additional Service\",\n            \"itemDescription\": \"Shipping fee adjustment\",\n            \"quantity\": 1,\n            \"unitOfMeasure\": \"EA\",\n            \"unitPrice\": 150,\n            \"netAmount\": 150,\n            \"vatRate\": 15,\n            \"vatAmount\": 22.5,\n            \"totalAmount\": 172.5,\n            \"discountAmount\": 0,\n            \"discountPercentage\": 0\n        }\n    ],\n    \"generateXml\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/debitnote",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "debitnote"
+              ]
+            },
+            "description": "Report a debit note to ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Report Sales Return",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"documentNumber\": \"SR-001\",\n    \"documentDate\": \"2023-01-04T12:00:00\",\n    \"documentIssueTime\": \"2023-01-04T12:00:00\",\n    \"sellerName\": \"Test Company LLC\",\n    \"sellerVatNumber\": \"123456789012345\",\n    \"sellerStreetName\": \"King Fahd Road\",\n    \"sellerBuildingNumber\": \"1234\",\n    \"sellerCityName\": \"Riyadh\",\n    \"sellerPostalCode\": \"12345\",\n    \"sellerDistrictName\": \"Al Olaya\",\n    \"sellerCountryCode\": \"SA\",\n    \"buyerName\": \"Buyer Company LLC\",\n    \"buyerVatNumber\": \"311111111111113\",\n    \"buyerStreetName\": \"King Abdullah Road\",\n    \"buyerBuildingNumber\": \"5678\",\n    \"buyerCityName\": \"Riyadh\",\n    \"buyerPostalCode\": \"54321\",\n    \"buyerDistrictName\": \"Al Malaz\",\n    \"buyerCountryCode\": \"SA\",\n    \"totalAmount\": 500,\n    \"totalWithoutVat\": 500,\n    \"vatAmount\": 75,\n    \"discount\": 0,\n    \"invoiceType\": 0,\n    \"transactionType\": 2,\n    \"invoiceCurrency\": \"SAR\",\n    \"paymentMethod\": \"CASH\",\n    \"relatedInvoiceNumber\": \"INV-001\",\n    \"lineItems\": [\n        {\n            \"lineNumber\": 1,\n            \"itemName\": \"Product A Return\",\n            \"itemDescription\": \"Full return of product\",\n            \"quantity\": 1,\n            \"unitOfMeasure\": \"EA\",\n            \"unitPrice\": 500,\n            \"netAmount\": 500,\n            \"vatRate\": 15,\n            \"vatAmount\": 75,\n            \"totalAmount\": 575,\n            \"discountAmount\": 0,\n            \"discountPercentage\": 0\n        }\n    ],\n    \"generateXml\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/salesreturn",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "salesreturn"
+              ]
+            },
+            "description": "Report a sales return to ZATCA"
+          },
+          "response": []
+        },
+        {
+          "name": "Validate Invoice",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"invoiceXml\": \"<Invoice>...</Invoice>\",\n    \"deviceSerialNumber\": \"POS123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/validate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "validate"
+              ]
+            },
+            "description": "Validate an invoice XML against ZATCA requirements"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Invoice XML",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"deviceSerialNumber\": \"POS123456\",\n    \"documentNumber\": \"INV-002\",\n    \"documentDate\": \"2023-01-05T12:00:00\",\n    \"documentIssueTime\": \"2023-01-05T12:00:00\",\n    \"sellerName\": \"Test Company LLC\",\n    \"sellerVatNumber\": \"123456789012345\",\n    \"sellerStreetName\": \"King Fahd Road\",\n    \"sellerBuildingNumber\": \"1234\",\n    \"sellerCityName\": \"Riyadh\",\n    \"sellerPostalCode\": \"12345\",\n    \"sellerDistrictName\": \"Al Olaya\",\n    \"sellerCountryCode\": \"SA\",\n    \"buyerName\": \"Individual Consumer\",\n    \"buyerVatNumber\": \"300000000000003\",\n    \"totalAmount\": 100,\n    \"totalWithoutVat\": 100,\n    \"vatAmount\": 15,\n    \"discount\": 0,\n    \"invoiceType\": 1,\n    \"transactionType\": 1,\n    \"invoiceCurrency\": \"SAR\",\n    \"paymentMethod\": \"CASH\",\n    \"lineItems\": [\n        {\n            \"lineNumber\": 1,\n            \"itemName\": \"Product B\",\n            \"itemDescription\": \"Retail product\",\n            \"quantity\": 1,\n            \"unitOfMeasure\": \"EA\",\n            \"unitPrice\": 100,\n            \"netAmount\": 100,\n            \"vatRate\": 15,\n            \"vatAmount\": 15,\n            \"totalAmount\": 115,\n            \"discountAmount\": 0,\n            \"discountPercentage\": 0\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/invoices/generatexml",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invoices",
+                "generatexml"
+              ]
+            },
+            "description": "Generate UBL 2.1 XML for an invoice without reporting it"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

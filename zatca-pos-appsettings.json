@@ -1,0 +1,19 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "ZatcaApi": {
+    "BaseUrl": "https://localhost:5001/",
+    "SandboxUrl": "https://gw-fatoora-zatca-sandbox.portal.gov.sa/",
+    "ProductionUrl": "https://gw-fatoora.zatca.gov.sa/"
+  },
+  "Auth": {
+    "Token": "",
+    "Expiration": "",
+    "Username": ""
+  }
+}
